@@ -2,59 +2,60 @@ const axios = require('axios')
 const xl = require('excel4node')
 const wb = new xl.Workbook()
 const ws = wb.addWorksheet('Nome da planilha')
+const Cnpj = require('./CnpjModel')
 
-let dados = [
+let listaEmpresas = [
     ["ALINHAUTO.","05.938.440/0001-08"],
     ["Aroldo Auto Mecânica.","07.877.875/0001-15"],
     ["Arraial Peças e Serviços.","19.812.723/0001-13"],
     ["Atend Car.","11.490.318/0001-14"],
-    ["Auto Expert.","29.847.491/0001-92"],
-    ["Auto Gás Norte.","05.522.328/0001-91"],
-    ["Prime Auto Import Recife.","20.050.356/0001-47"],
-    ["Auto Mecânica Boa Sorte.","30.126.615/0001-20"],
-    ["Auto Premier.","12.726.189/0001-83"],
-    ["Auto Simões.","19.124.863/0001-07"],
-    ["Auto Stop","20.011.838/0001-98"],
-    ["Auto Vale Pinturas.","02.022.935/0001-02"],
-    ["Auto Total.","24.375.396/0001-10"],
-    ["Beto Auto Elétrica.","07.017.373/0001-14"],
-    ["Bono Pneus Recife.","43.397.457/0001-94"],
-    ["Br Reforma e Pintura De Bau.","11.613.591/0001-99"],
-    ["Campeão Performance Parts.","23.839.185/0001-28"],
-    ["Car Service Import.","44.694.137/0001-69"],
-    ["Cemauto.","07.765.858/0001-96"],
-    ["Ledcar Injeção Eletrônica.","11.157.932/0001-69"],
-    ["Cicero Serviços Automotivos.","15.286.295/0001-81"],
-    ["Clivel.","09.492.802/0001-30"],
-    ["Clube Oásis Premium Estética Automotiva.","27.306.004/0001-59"],
-    ["Dap - Dinâmica Auto Pecas.","07.777.731/0001-97"],
-    ["Dm Pneus.","06.950.622/0001-67"],
-    ["Dutra Auto Pecas.","17.171.171/0001-86"],
-    ["Falcão Auto Pecas e Serviços.","29.661.562/0001-68"],
-    ["Fator Premium.","13.427.808/0001-00"],
-    ["Flash Equipadora.","11.228.833/0001-20"],
-    ["For Motors.","27.946.194/0001-79"],
-    ["GGB Ecopeças.","10.352.700/0001-07"],
-    ["Globo Auto Service.","39.795.267/0001-58"],
-    ["Hidrauturbo.","13.196.495/0001-18"],
-    ["Hm Hidráulica.","11.115.349/0001-95"],
-    ["Império Das Motos.","27.892.383/0001-06"],
-    ["JJD MANUTENCAO AUTOMOTIVA EIRELI.","34.944.832/0001-88"],
-    ["Lider Diesel Manut. E Reparação De Veículos Automotores.","21.630.490/0001-80"],
-    ["Locadora Caminha.","10.936.383/0001-68"],
-    ["Lucena Auto Service.","07.331.103/0001-83"],
-    ["Manocar.","12.767.194/0001-34"],
-    ["Marcos Martelinho De Ouro.","27.126.533/0001-70"],
-    ["Martelinho De Ouro Personalite.","29.449.323/0001-49"],
-    ["Martelinho De Ouro Torre.","29.890.096/0001-92"],
-    ["Maxtroc.","08.751.372/0001-61"],
-    ["Maxi Retifica.","10.796.088/0001-53"],
-    ["Mecânica Lucena.","11.554.326/0001-87"],
-    ["Menorpreco Serviços.","03.864.143/0001-30"],
-    ["Mentor Motors.","30.863.029/0001-68"],
-    ["Meu Mecânico Serviços a Diesel.","22.805.145/0001-00"],
-    ["Mônaco Auto Service.","13.713.447/0001-50"],
-    ["Motegi Auto Service.","03.504.144/0001-73"],
+    // ["Auto Expert.","29.847.491/0001-92"],
+    // ["Auto Gás Norte.","05.522.328/0001-91"],
+    // ["Prime Auto Import Recife.","20.050.356/0001-47"],
+    // ["Auto Mecânica Boa Sorte.","30.126.615/0001-20"],
+    // ["Auto Premier.","12.726.189/0001-83"],
+    // ["Auto Simões.","19.124.863/0001-07"],
+    // ["Auto Stop","20.011.838/0001-98"],
+    // ["Auto Vale Pinturas.","02.022.935/0001-02"],
+    // ["Auto Total.","24.375.396/0001-10"],
+    // ["Beto Auto Elétrica.","07.017.373/0001-14"],
+    // ["Bono Pneus Recife.","43.397.457/0001-94"],
+    // ["Br Reforma e Pintura De Bau.","11.613.591/0001-99"],
+    // ["Campeão Performance Parts.","23.839.185/0001-28"],
+    // ["Car Service Import.","44.694.137/0001-69"],
+    // ["Cemauto.","07.765.858/0001-96"],
+    // ["Ledcar Injeção Eletrônica.","11.157.932/0001-69"],
+    // ["Cicero Serviços Automotivos.","15.286.295/0001-81"],
+    // ["Clivel.","09.492.802/0001-30"],
+    // ["Clube Oásis Premium Estética Automotiva.","27.306.004/0001-59"],
+    // ["Dap - Dinâmica Auto Pecas.","07.777.731/0001-97"],
+    // ["Dm Pneus.","06.950.622/0001-67"],
+    // ["Dutra Auto Pecas.","17.171.171/0001-86"],
+    // ["Falcão Auto Pecas e Serviços.","29.661.562/0001-68"],
+    // ["Fator Premium.","13.427.808/0001-00"],
+    // ["Flash Equipadora.","11.228.833/0001-20"],
+    // ["For Motors.","27.946.194/0001-79"],
+    // ["GGB Ecopeças.","10.352.700/0001-07"],
+    // ["Globo Auto Service.","39.795.267/0001-58"],
+    // ["Hidrauturbo.","13.196.495/0001-18"],
+    // ["Hm Hidráulica.","11.115.349/0001-95"],
+    // ["Império Das Motos.","27.892.383/0001-06"],
+    // ["JJD MANUTENCAO AUTOMOTIVA EIRELI.","34.944.832/0001-88"],
+    // ["Lider Diesel Manut. E Reparação De Veículos Automotores.","21.630.490/0001-80"],
+    // ["Locadora Caminha.","10.936.383/0001-68"],
+    // ["Lucena Auto Service.","07.331.103/0001-83"],
+    // ["Manocar.","12.767.194/0001-34"],
+    // ["Marcos Martelinho De Ouro.","27.126.533/0001-70"],
+    // ["Martelinho De Ouro Personalite.","29.449.323/0001-49"],
+    // ["Martelinho De Ouro Torre.","29.890.096/0001-92"],
+    // ["Maxtroc.","08.751.372/0001-61"],
+    // ["Maxi Retifica.","10.796.088/0001-53"],
+    // ["Mecânica Lucena.","11.554.326/0001-87"],
+    // ["Menorpreco Serviços.","03.864.143/0001-30"],
+    // ["Mentor Motors.","30.863.029/0001-68"],
+    // ["Meu Mecânico Serviços a Diesel.","22.805.145/0001-00"],
+    // ["Mônaco Auto Service.","13.713.447/0001-50"],
+    // ["Motegi Auto Service.","03.504.144/0001-73"],
     // ["Nery Automáticos.","28.249.768/0001-12"],
     // ["Norte Gás Automotivo.","10.461.182/0001-51"],
     // ["Nova Automotiva.","20.727.607/0001-85"],
@@ -111,47 +112,44 @@ let dados = [
     // ["Oficina Medida Exata","06.141.842/0001-40"]
 ]
 
-let headingColumnNames = ["NOME FANTASIA",
-  "RAZAO SOCIAL",
-  "CNPJ",
-  "STATUS",
-  "SETOR",
-  "CNAE PRINCIPAL DESCRICAO",
-  "CNAE PRINCIPAL CODIGO",
-  "CEP",
-  "DATA ABERTURA",
-  "DDD",
-  "TELEFONE",
-  "EMAIL",
-  "TIPO LOGRADOURO",
-  "LOGRADOURO",
-  "NUMERO",
-  "COMPLEMENTO",
-  "BAIRRO",
-  "MUNICIPIO",
-  "UF"]
+const headingColumnNames = [
+    "RAZAO SOCIAL",
+    "CNPJ",
+    "STATUS",
+    "CNAE PRINCIPAL DESCRICAO",
+    "MUNICIPIO",
+    "UF"
+]
 
-let count = 0
 let dadosEmpresas = []
 
-const buscaDados = async (count) => {
-    try {
-        const response = await axios.get(`https://receitaws.com.br/v1/cnpj/` + '06141842000140')
-        console.log(response.data);
-        dadosEmpresas.push(response.data)
-    } catch (error) {
-        console.log(error.response.body);
+function wait(time = 0) {
+    return new Promise((resolve) => {
+        setTimeout(resolve, time);
+    });
+}
+  
+async function main(idx, empresa) {
+    empresa[1] = empresa[1].replace(/[\.\/\-]/g, '')
+    const api = await fetch('https://receitaws.com.br/v1/cnpj/' + empresa[1])
+    .then(data => data.json())
+    .then(response => {
+        // console.log(response)
+        let empresaModel = new Cnpj(response)
+        console.log(empresaModel)
+        dadosEmpresas.push(empresaModel)
+    })
+    await wait(20000); 
+}
+  
+async function buscaRequisicaoApi() {
+    for (const [idx, empresa] of listaEmpresas.entries()) {
+        await main(idx, empresa);
     }
-};
-
-while (count < 1){
-    dados[count][1] = dados[count][1].replace(/[\.\/\-]/g, '')
-    buscaDados(count)
-    count++
+    transformarPlanilha()
 }
 
-console.log(dados)
-console.log(dadosEmpresas)
+buscaRequisicaoApi()
 
 const transformarPlanilha = () => {
     let headingColumnIndex = 1
@@ -170,10 +168,3 @@ const transformarPlanilha = () => {
 
     wb.write('arquivo.xlsx')
 }
-
-transformarPlanilha()
-
-
-
-
-
