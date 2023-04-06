@@ -2,34 +2,35 @@ const xl = require('excel4node')
 const wb = new xl.Workbook()
 const ws = wb.addWorksheet('Nome da planilha')
 const Cnpj = require('./CnpjModel')
+const cliProgress = require('cli-progress');
 
 let listaEmpresas = [
     ["ALINHAUTO.","05.938.440/0001-08"],
     ["Aroldo Auto Mecânica.","07.877.875/0001-15"],
     ["Arraial Peças e Serviços.","19.812.723/0001-13"],
-    ["Atend Car.","11.490.318/0001-14"],
-    ["Auto Expert.","29.847.491/0001-92"],
-    ["Auto Gás Norte.","05.522.328/0001-91"],
-    ["Prime Auto Import Recife.","20.050.356/0001-47"],
-    ["Auto Mecânica Boa Sorte.","30.126.615/0001-20"],
-    ["Auto Premier.","12.726.189/0001-83"],
-    ["Auto Simões.","19.124.863/0001-07"],
-    ["Auto Stop","20.011.838/0001-98"],
-    ["Auto Vale Pinturas.","02.022.935/0001-02"],
-    ["Auto Total.","24.375.396/0001-10"],
-    ["Beto Auto Elétrica.","07.017.373/0001-14"],
-    ["Bono Pneus Recife.","43.397.457/0001-94"],
-    ["Br Reforma e Pintura De Bau.","11.613.591/0001-99"],
-    ["Campeão Performance Parts.","23.839.185/0001-28"],
-    ["Car Service Import.","44.694.137/0001-69"],
-    ["Cemauto.","07.765.858/0001-96"],
-    ["Ledcar Injeção Eletrônica.","11.157.932/0001-69"],
-    ["Cicero Serviços Automotivos.","15.286.295/0001-81"],
-    ["Clivel.","09.492.802/0001-30"],
-    ["Clube Oásis Premium Estética Automotiva.","27.306.004/0001-59"],
-    ["Dap - Dinâmica Auto Pecas.","07.777.731/0001-97"],
-    ["Dm Pneus.","06.950.622/0001-67"],
-    ["Dutra Auto Pecas.","17.171.171/0001-86"],
+    // ["Atend Car.","11.490.318/0001-14"],
+    // ["Auto Expert.","29.847.491/0001-92"],
+    // ["Auto Gás Norte.","05.522.328/0001-91"],
+    // ["Prime Auto Import Recife.","20.050.356/0001-47"],
+    // ["Auto Mecânica Boa Sorte.","30.126.615/0001-20"],
+    // ["Auto Premier.","12.726.189/0001-83"],
+    // ["Auto Simões.","19.124.863/0001-07"],
+    // ["Auto Stop","20.011.838/0001-98"],
+    // ["Auto Vale Pinturas.","02.022.935/0001-02"],
+    // ["Auto Total.","24.375.396/0001-10"],
+    // ["Beto Auto Elétrica.","07.017.373/0001-14"],
+    // ["Bono Pneus Recife.","43.397.457/0001-94"],
+    // ["Br Reforma e Pintura De Bau.","11.613.591/0001-99"],
+    // ["Campeão Performance Parts.","23.839.185/0001-28"],
+    // ["Car Service Import.","44.694.137/0001-69"],
+    // ["Cemauto.","07.765.858/0001-96"],
+    // ["Ledcar Injeção Eletrônica.","11.157.932/0001-69"],
+    // ["Cicero Serviços Automotivos.","15.286.295/0001-81"],
+    // ["Clivel.","09.492.802/0001-30"],
+    // ["Clube Oásis Premium Estética Automotiva.","27.306.004/0001-59"],
+    // ["Dap - Dinâmica Auto Pecas.","07.777.731/0001-97"],
+    // ["Dm Pneus.","06.950.622/0001-67"],
+    // ["Dutra Auto Pecas.","17.171.171/0001-86"],
     // ["Falcão Auto Pecas e Serviços.","29.661.562/0001-68"],
     // ["Fator Premium.","13.427.808/0001-00"],
     // ["Flash Equipadora.","11.228.833/0001-20"],
@@ -122,6 +123,10 @@ const headingColumnNames = [
     "UF"
 ]
 
+const bar = new cliProgress.SingleBar({}, cliProgress.Presets.shades_classic);
+
+bar.start(listaEmpresas.length - 1, 0);
+
 function wait(time = 0) {
     return new Promise((resolve) => {
         setTimeout(resolve, time);
@@ -135,6 +140,7 @@ async function main(idx, empresa) {
     .then(response => {
         let empresaModel = new Cnpj(response)
         dadosEmpresas.push(empresaModel)
+        bar.update(idx)
     })
     await wait(20000); 
 }
@@ -143,6 +149,7 @@ async function buscaRequisicaoApi() {
     for (const [idx, empresa] of listaEmpresas.entries()) {
         await main(idx, empresa);
     }
+    bar.stop();
     transformarPlanilha()
 }
 
